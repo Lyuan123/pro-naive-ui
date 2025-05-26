@@ -67,6 +67,7 @@ export default defineComponent({
     const proDataTableProps = computed<ProDataTableProps>(() => {
       return {
         ...keep(props, proDataTablePropKeys),
+        ...keep(props.fieldProps ?? {}, proDataTablePropKeys),
         data: list.value,
         ref: proDataTableInst,
         columns: columns.value,
@@ -129,6 +130,7 @@ export default defineComponent({
                 <CreatorButton
                   rowKey={this.$props.rowKey}
                   actionGuard={this.$props.actionGuard}
+                  childrenKey={this.$props.childrenKey}
                   recordCreatorProps={this.$props.recordCreatorProps}
                 />
               ),

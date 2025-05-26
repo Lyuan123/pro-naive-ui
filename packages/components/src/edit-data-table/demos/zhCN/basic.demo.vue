@@ -1,5 +1,5 @@
 <markdown>
-# 基本使用
+# 基本展示
 </markdown>
 
 <script lang="tsx">
@@ -7,126 +7,111 @@ import type { ProEditDataTableColumns } from 'pro-naive-ui'
 import { createProForm } from 'pro-naive-ui'
 import { defineComponent, ref } from 'vue'
 
+interface DataSourceType {
+  id: string
+  title?: string
+  now?: number
+  rate?: number
+}
+
 export default defineComponent({
   setup() {
-    const data = [
-      // { id: 1, now: Date.now(), no: '', title: 'Wonderwall', length: '4:18' },
-      {
-        id: 2,
-        now: Date.now(),
-        no: '',
-        title: 'Don\'t Look',
-        length: '4:48',
-        children: [
-          {
-            id: 21,
-            now: Date.now(),
-            no: '',
-            title: 'Look1',
-            length: '4:48',
-          },
-          {
-            id: 22,
-            now: Date.now(),
-            no: '',
-            title: 'Look2',
-            length: '4:48',
-          },
-        ],
-      },
-      // { id: 3, now: Date.now(), no: '', title: 'Champagne', length: '7:27' },
-      // { id: 4, now: Date.now(), no: '', title: 'Wonderwall', length: '4:18' },
-      // { id: 5, now: Date.now(), no: '', title: 'Don\'t Look', length: '4:48' },
-      // { id: 6, now: Date.now(), no: '', title: 'Champagne', length: '7:27' },
-    ]
-
-    const editableKeys = ref([1, 2, 3, 4, 5, 6, 21, 22])
-
+    const editableKeys = ref<string[]>([])
     const form = createProForm({
       initialValues: {
-        name: '',
-        list: data,
+        list: [
+          {
+            id: '1',
+            now: Date.now(),
+            rate: 4,
+            title: '任务一',
+          },
+          {
+            id: '2',
+            now: Date.now(),
+            rate: 3,
+            title: '任务二',
+          },
+          {
+            id: '3',
+            now: Date.now(),
+            rate: 5,
+            title: '任务三',
+          },
+        ],
       },
       onSubmit: console.log,
     })
 
-    const columns: ProEditDataTableColumns = [
+    function cancelEditable(id: string) {
+      editableKeys.value = editableKeys.value.filter(key => key !== id)
+    }
+
+    const columns: ProEditDataTableColumns<DataSourceType> = [
       {
-        title: 'No',
-        path: 'no',
+        title: 'Title',
+        path: 'title',
+        field: 'input',
+        width: 200,
       },
       {
         title: '时间',
         path: 'now',
-        valueType: 'date-time',
+        field: 'date-time',
         width: 200,
       },
       {
-        title: 'Title',
-        path: 'title',
-        valueType: 'input',
-        proFieldProps: {
-          required: true,
-        },
-      },
-      {
-        title: 'Length',
-        path: 'length',
-        valueType: 'input',
-        width: 200,
+        title: '评分',
+        path: 'rate',
+        field: 'rate',
       },
       {
         title: '操作',
         width: 120,
         fixed: 'right',
-        render(row, rowIndex, action) {
-          console.log(action)
-          return '1'
+        render: (row, rowIndex, action) => {
+          const { remove, editable } = action
+          return (
+            <n-flex>
+              {editable
+                ? (
+                    <n-button
+                      text={true}
+                      type="primary"
+                      onClick={() => cancelEditable(row.id)}
+                    >
+                      保存
+                    </n-button>
+                  )
+                : [
+                    <n-button
+                      text={true}
+                      type="primary"
+                      onClick={() => editableKeys.value.push(row.id)}
+                    >
+                      编辑
+                    </n-button>,
+                    <n-button
+                      text={true}
+                      type="error"
+                      onClick={() => {
+                        remove(rowIndex)
+                        cancelEditable(row.id)
+                      }}
+                    >
+                      删除
+                    </n-button>,
+                  ]}
+            </n-flex>
+          )
         },
-        // render(row, index, {
-        //   remove,
-        //   editable,
-        // } = {}) {
-        //   console.log(index)
-        //   const buttonDoms = editable
-        //     ? [
-        //         <NButton
-        //           text={true}
-        //           type="primary"
-        //           onClick={() => {
-        //             editableKeys.value = editableKeys.value.filter(key => key !== row.id)
-        //           }}
-        //         >
-        //           保存
-        //         </NButton>,
-        //       ]
-        //     : [
-        //         <NButton
-        //           text={true}
-        //           type="primary"
-        //           onClick={() => editableKeys.value.push(row.id)}
-        //         >
-        //           编辑
-        //         </NButton>,
-        //         <NButton
-        //           text={true}
-        //           type="error"
-        //           onClick={() => remove(index)}
-        //         >
-        //           删除
-        //         </NButton>,
-        //       ]
-        //   return <NFlex>{buttonDoms}</NFlex>
-        // },
       },
     ]
 
     return {
       form,
-      data,
       columns,
       editableKeys,
-      values: form.values,
     }
   },
 })
@@ -135,20 +120,23 @@ export default defineComponent({
 <template>
   <pro-form :form="form" label-placement="left">
     <div class="flex flex-col">
-      <pro-input
-        title="名称"
-        path="name"
-      />
-      <pro-edit-data-table
-        v-model:editable-keys="editableKeys"
-        title="爱好"
-        path="list"
-        :columns="columns"
-        :record-creator-props="{
-          record: () => ({ id: Date.now() }),
+      <pro-config-provider
+        :prop-overrides="{
+          ProFormItem: {
+            showFeedback: false,
+          },
         }"
-        row-key="id"
-      />
+      >
+        <pro-edit-data-table
+          v-model:editable-keys="editableKeys"
+          path="list"
+          :columns="columns"
+          :record-creator-props="{
+            record: () => ({ id: Date.now() }),
+          }"
+          row-key="id"
+        />
+      </pro-config-provider>
     </div>
     <n-button type="primary" attr-type="submit">
       提交
