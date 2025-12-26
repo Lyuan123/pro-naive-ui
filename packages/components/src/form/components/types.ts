@@ -11,6 +11,7 @@ import type { ProDynamicTagsProps, ProDynamicTagsSlots } from './dynamic-tags'
 import type { ProFieldSharedProps } from './field'
 import type { BuiltinFieldEnum, BuiltinFieldType } from './field/enums'
 import type { ProInputProps, ProInputSlots } from './input'
+import type { ProInputOtpProps, ProInputOtpSlots } from './input-otp'
 import type { ProMentionProps, ProMentionSlots } from './mention'
 import type { ProRadioGroupProps, ProRadioGroupSlots } from './radio-group'
 import type { ProRateProps, ProRateSlots } from './rate'
@@ -22,7 +23,7 @@ import type { ProTransferProps, ProTransferSlots } from './transfer'
 import type { ProTreeSelectProps, ProTreeSelectSlots } from './tree-select'
 import type { ProUploadProps, ProUploadSlots } from './upload'
 
-export interface ProBaseFieldColumn<Values = any, ProFieldPropsParameters extends any[] = any[]> {
+interface ProBaseFieldColumn<Values = any, ProFieldPropsParameters extends any[] = any[]> {
   /**
    * 字段路径
    */
@@ -114,6 +115,16 @@ interface InputColumn<
     | `${BuiltinFieldEnum.TEXTAREA}`
   fieldSlots?: UnwrapSlots<ProInputSlots>
   fieldProps?: MaybeFunction<NonNullable<ProInputProps['fieldProps']>, FieldPropsParameters>
+}
+
+interface InputOtpColumn<
+  Values = any,
+  FieldPropsParameters extends any[] = any[],
+  ProFieldPropsParameters extends any[] = any[],
+> extends ProBaseFieldColumn<Values, ProFieldPropsParameters> {
+  field?: `${BuiltinFieldEnum.INPUT_OTP}`
+  fieldSlots?: UnwrapSlots<ProInputOtpSlots>
+  fieldProps?: MaybeFunction<NonNullable<ProInputOtpProps['fieldProps']>, FieldPropsParameters>
 }
 
 interface MentionColumn<
@@ -238,6 +249,31 @@ interface TreeSelectColumn<
 }
 
 /**
+ * 让用户可以扩展 ProFieldColumn 的类型
+ */
+export interface ProFieldCustomColumn {}
+
+/**
+ * 方便用户符合直觉的扩展类型，这里做一下包装
+ */
+type WrapProFieldCustomColumn<
+  Column = any,
+  Values = any,
+  FieldPropsParameters extends any[] = any[],
+  ProFieldPropsParameters extends any[] = any[],
+> = Column extends {
+  field?: infer F
+  fieldProps?: infer P
+  fieldSlots?: infer S
+}
+  ? Merge<ProBaseFieldColumn<Values, ProFieldPropsParameters>, {
+    field?: F
+    fieldSlots?: UnwrapSlots<S>
+    fieldProps?: MaybeFunction<NonNullable<P>, FieldPropsParameters>
+  }>
+  : never
+
+/**
  * 通用字段解释
  *  field: 渲染哪个字段组件
  *  fieldProps: 透传给字段组件的 props
@@ -261,6 +297,7 @@ export type ProFieldColumn<
   | Merge<CascaderColumn<Values, FunctionalFieldPropsParameters, FunctionalProFieldPropsParameters>, ExtraProps>
   | Merge<TransferColumn<Values, FunctionalFieldPropsParameters, FunctionalProFieldPropsParameters>, ExtraProps>
   | Merge<CheckboxColumn<Values, FunctionalFieldPropsParameters, FunctionalProFieldPropsParameters>, ExtraProps>
+  | Merge<InputOtpColumn<Values, FunctionalFieldPropsParameters, FunctionalProFieldPropsParameters>, ExtraProps>
   | Merge<RadioGroupColumn<Values, FunctionalFieldPropsParameters, FunctionalProFieldPropsParameters>, ExtraProps>
   | Merge<TimePickerColumn<Values, FunctionalFieldPropsParameters, FunctionalProFieldPropsParameters>, ExtraProps>
   | Merge<DatePickerColumn<Values, FunctionalFieldPropsParameters, FunctionalProFieldPropsParameters>, ExtraProps>
@@ -269,5 +306,10 @@ export type ProFieldColumn<
   | Merge<DynamicTagsColumn<Values, FunctionalFieldPropsParameters, FunctionalProFieldPropsParameters>, ExtraProps>
   | Merge<AutoCompleteColumn<Values, FunctionalFieldPropsParameters, FunctionalProFieldPropsParameters>, ExtraProps>
   | Merge<CheckboxGroupColumn<Values, FunctionalFieldPropsParameters, FunctionalProFieldPropsParameters>, ExtraProps>
+  | (
+    ProFieldCustomColumn extends { column: infer CustomColumn }
+      ? Merge<WrapProFieldCustomColumn<CustomColumn, Values, FunctionalFieldPropsParameters, FunctionalProFieldPropsParameters>, ExtraProps>
+      : never
+  )
 
 export type ProFieldColumnType = BuiltinFieldType

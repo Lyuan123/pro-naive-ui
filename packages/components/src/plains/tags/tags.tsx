@@ -3,8 +3,8 @@ import type { ProTagsConfig } from './types'
 import { isArray, isPlainObject, isString } from 'lodash-es'
 import { NFlex, NTag } from 'naive-ui'
 import { defineComponent, toValue } from 'vue'
-import { useNaiveClsPrefix } from '../../_internal/useClsPrefix'
-import { isEmptyValue } from '../../_utils/isEmptyValue'
+import { useNaiveClsPrefix } from '../../_internal/use-cls-prefix'
+import { isEmptyValue } from '../../_utils/is-empty-value'
 import { useOverrideProps } from '../../composables'
 import { useInjectGlobalConfig } from '../../config-provider'
 
@@ -45,7 +45,10 @@ const ProTags = defineComponent({
       return toValue(this.mergedEmpty.tags)
     }
     return (
-      <NFlex class={[`${this.mergedClsPrefix}-pro-tags`]}>
+      <NFlex
+        class={[`${this.mergedClsPrefix}-pro-tags`]}
+        inline={true}
+      >
         {tags!.map((option, index) => {
           const { content, ...nTagProps } = option
           return (

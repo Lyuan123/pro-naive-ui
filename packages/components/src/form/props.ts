@@ -1,8 +1,8 @@
 import type { ExtractPublicPropTypes, PropType } from 'vue'
-import type { CreateProFormReturn } from './composables/createProForm'
+import type { CreateProFormReturn } from './composables/create-pro-form'
 import { formProps } from 'naive-ui'
-import { keysOf } from '../_utils/keysOf'
-import { simplyOmit } from '../_utils/simplyOmit'
+import { keysOf } from '../_utils/keys-of'
+import { simplyOmit } from '../_utils/simply-omit'
 
 export interface ValidateError {
   message?: string
@@ -24,10 +24,6 @@ export const proFormExtendProps = {
    * 表单是否在提交中,防止重复提交
    */
   loading: Boolean,
-  /**
-   * 是否在按下回车后提交
-   */
-  submitOnPressEnter: Boolean,
   /**
    * 表单验证时机
    */

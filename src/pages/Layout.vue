@@ -5,6 +5,7 @@ import { computed, defineComponent, ref, toRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useComponentOptions, useDocOptions } from '../store'
 import { renderMenuLabel } from '../store/menu-options'
+import AdBanner from '../utils/AdBanner.vue'
 import { useIsMobile, useIsTablet } from '../utils/composables'
 import { findMenuValue } from '../utils/route'
 import SiteFooter from './home/Footer.vue'
@@ -12,6 +13,7 @@ import SiteFooter from './home/Footer.vue'
 export default defineComponent({
   components: {
     SiteFooter,
+    AdBanner,
   },
   setup() {
     const route = useRoute()
@@ -79,6 +81,12 @@ export default defineComponent({
       bordered
       show-trigger="arrow-circle"
     >
+      <!-- 广告横幅 -->
+      <AdBanner
+        href="https://naive-ui-pro.pro-components.cn/"
+        title="Naive UI Pro"
+        subtitle="配套的中后台管理模板"
+      />
       <n-menu
         :value="menuValue"
         :options="options"

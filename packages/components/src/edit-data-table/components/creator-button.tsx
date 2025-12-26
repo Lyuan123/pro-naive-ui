@@ -6,11 +6,11 @@ import { isArray, isFunction, isNil } from 'lodash-es'
 import { NIcon } from 'naive-ui'
 import { useInjectField } from 'pro-composables'
 import { computed, defineComponent, inject, ref } from 'vue'
-import { useNaiveClsPrefix } from '../../_internal/useClsPrefix'
+import { useNaiveClsPrefix } from '../../_internal/use-cls-prefix'
 import { findTree } from '../../_utils/tree'
 import { warnOnce } from '../../_utils/warn'
 import { ProButton } from '../../button'
-import { resolveRowKey } from '../../data-table/utils/resolveRowKey'
+import { resolveRowKey } from '../../data-table/utils/resolve-row-key'
 import { useInjectProForm } from '../../form'
 import { useLocale } from '../../locales'
 import { editDataTableInjectionKey } from '../context'
@@ -29,7 +29,7 @@ export default defineComponent({
     const mergedClsPrefix = useNaiveClsPrefix()
 
     const {
-      getMessage,
+      t,
     } = useLocale('ProEditDataTable')
 
     const {
@@ -58,8 +58,8 @@ export default defineComponent({
       return {
         block: true,
         dashed: true,
+        content: t('add'),
         loading: loading.value,
-        content: getMessage('add'),
         renderIcon: () => {
           return (
             <NIcon>
@@ -109,7 +109,7 @@ export default defineComponent({
           editableKeys.value = new Set([
             ...editableKeys.value,
             resolveRowKey(row, rowKey),
-          ].filter(Boolean))
+          ])
           if (afterAddRow) {
             afterAddRow({ total: list.value.length, index: -1, insertIndex })
           }
@@ -127,7 +127,7 @@ export default defineComponent({
         editableKeys.value = new Set([
           ...editableKeys.value,
           resolveRowKey(row, rowKey),
-        ].filter(Boolean))
+        ])
         if (afterAddRow) {
           afterAddRow({ total: list.value.length, index: -1, insertIndex })
         }

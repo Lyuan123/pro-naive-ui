@@ -1,56 +1,33 @@
 import type { SlotsType } from 'vue'
-import type { ProEditDataTableProps } from './props'
+import type { InternalEditDataTableProps } from './props'
 import type { ProEditDataTableSlots } from './slots'
 import { computed, defineComponent } from 'vue'
-import { useNaiveClsPrefix } from '../_internal/useClsPrefix'
-import { useMountStyle } from '../_internal/useMountStyle'
-import { keep } from '../_utils/keep'
-import { useOverrideProps } from '../composables'
-import { pickProListFieldSharedProps, ProField } from '../form'
+import { useNaiveClsPrefix } from '../_internal/use-cls-prefix'
+import { useMountStyle } from '../_internal/use-mount-style'
+import { useForwardRef } from '../composables/use-forward-ref'
+import { useProListField } from '../form/components/field'
+import { ProFormItem } from '../form/components/form-item'
 import EditDataTable from './components/edit-data-table'
-import { provideEditDataTableInstStore } from './inst'
-import { internalEditDataTablePropKeys, proEditDataTableProps } from './props'
+import { proEditDataTableProps } from './props'
 import style from './styles/index.cssr'
 
 const name = 'ProEditDataTable'
 export default defineComponent({
   name,
+  inheritAttrs: false,
   props: proEditDataTableProps,
   slots: Object as SlotsType<ProEditDataTableSlots>,
-  setup(props, { expose }) {
-    const {
-      exposed,
-    } = provideEditDataTableInstStore()
-
-    const overridedProps = useOverrideProps<ProEditDataTableProps>(
-      name,
-      props,
-    )
-
+  setup(props) {
+    const forwardRef = useForwardRef()
     const mergedClsPrefix = useNaiveClsPrefix()
 
-    const proFieldProps = computed(() => {
-      return pickProListFieldSharedProps(overridedProps.value)
-    })
-
-    const internalEditDataTableProps = computed(() => {
-      const {
-        // #region 冲突的属性
-        size,
-        theme,
-        title,
-        tooltip,
-        themeOverrides,
-        builtinThemeOverrides,
-        // #endregion
-        ...restProps
-      } = overridedProps.value
-
-      return keep(
-        restProps,
-        internalEditDataTablePropKeys,
-      )
-    })
+    const {
+      field,
+      mergedReadonly,
+      overridedProps,
+      proFormItemProps,
+      mergedFieldProps,
+    } = useProListField<InternalEditDataTableProps>(props, name)
 
     useMountStyle(
       name,
@@ -58,46 +35,44 @@ export default defineComponent({
       style,
       mergedClsPrefix,
     )
-
-    expose(exposed)
     return {
-      proFieldProps,
+      field,
+      forwardRef,
+      mergedReadonly,
       mergedClsPrefix,
-      internalEditDataTableProps,
+      proFormItemProps,
+      mergedFieldProps,
+      flexHeight: computed(() => overridedProps.value.flexHeight),
     }
   },
   render() {
-    const {
-      $props,
-      mergedClsPrefix,
-    } = this
-
+    if (!this.field.show.value) {
+      return null
+    }
     return (
-      <ProField
+      <ProFormItem
         class={[
-          `${mergedClsPrefix}-pro-edit-data-table-wrapper`,
+          `${this.mergedClsPrefix}-pro-edit-data-table-wrapper`,
           {
-            [`${mergedClsPrefix}-pro-edit-data-table-wrapper--flex-height`]: $props.flexHeight,
+            [`${this.mergedClsPrefix}-pro-edit-data-table-wrapper--flex-height`]: this.flexHeight,
           },
         ]}
-        {...this.proFieldProps}
-        isList={true}
-        valueModelName=""
-        fieldProps={this.internalEditDataTableProps}
+        {...this.proFormItemProps}
       >
         {{
           ...this.$slots,
-          input: (pureProps: any) => {
+          default: () => {
             return (
               <EditDataTable
-                class={[`${mergedClsPrefix}-pro-edit-data-table`]}
-                {...pureProps}
+                ref={this.forwardRef}
+                class={[`${this.mergedClsPrefix}-pro-edit-data-table`]}
+                {...this.mergedFieldProps}
                 v-slots={this.$slots}
               />
             )
           },
         }}
-      </ProField>
+      </ProFormItem>
     )
   },
 })

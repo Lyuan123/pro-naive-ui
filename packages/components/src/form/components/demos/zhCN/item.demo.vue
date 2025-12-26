@@ -2,59 +2,53 @@
 # 表单项
 </markdown>
 
-<script lang="tsx">
+<script setup lang="tsx">
 import { ArchiveOutline as ArchiveIcon } from '@vicons/ionicons5'
 import { createProForm, uid } from 'pro-naive-ui'
-import { computed, defineComponent, ref } from 'vue'
+import { computed, ref } from 'vue'
 
-export default defineComponent({
-  components: { ArchiveIcon },
-  setup() {
-    const readonly = ref(false)
-    const form = createProForm({
-      initialValues: {
-        'name': 'zcf',
-        'password': 'zcf',
-        'select': 0,
-        'select-multiple': [0, 2],
-        'tree-select': 'Wait',
-        'radio-group': 0,
-        'radio-group-vertical': 1,
-        'radio-button': 2,
-        'checkbox-group': [0, 1, 2],
-        'checkbox-group-vertical': [1, 2, 3],
-        'checkbox-group-grid': [1, 2],
-        'input-number': 3,
-        'switch': true,
-        'slider': 37,
-        'rate': 3,
-        'upload': [
-          {
-            id: uid(),
-            name: 'naive',
-            status: 'finished',
-            url: 'https://www.naiveui.com/assets/naivelogo-BdDVTUmz.svg',
-          },
-        ],
+const readonly = ref(false)
+
+const form = createProForm({
+  initialValues: {
+    'name': 'zcf',
+    'password': 'zcf',
+    'select': 0,
+    'input-otp': '654321'.split(''),
+    'select-multiple': [0, 2],
+    'tree-select': 'Wait',
+    'radio-group': 0,
+    'radio-group-vertical': 1,
+    'radio-button': 2,
+    'checkbox-group': [0, 1, 2],
+    'checkbox-group-vertical': [1, 2, 3],
+    'checkbox-group-grid': [1, 2],
+    'input-number': 3,
+    'switch': true,
+    'slider': 37,
+    'rate': 3,
+    'upload': [
+      {
+        id: uid(),
+        name: 'naive',
+        status: 'finished',
+        url: 'https://www.naiveui.com/assets/naivelogo-BdDVTUmz.svg',
       },
-      onSubmit: console.log,
-    })
-    return {
-      readonly,
-      form,
-      autoCompleteOptions: computed(() => {
-        return ['@gmail.com', '@163.com', '@qq.com'].map((suffix) => {
-          // @ts-ignore
-          const value = form.values.value['auto-complete']
-          const prefix = (value ?? '').split('@')[0]
-          return {
-            label: prefix + suffix,
-            value: prefix + suffix,
-          }
-        })
-      }),
-    }
+    ],
   },
+  onSubmit: console.log,
+})
+
+const autoCompleteOptions = computed(() => {
+  return ['@gmail.com', '@163.com', '@qq.com'].map((suffix) => {
+    // @ts-ignore
+    const value = form.values.value['auto-complete']
+    const prefix = (value ?? '').split('@')[0]
+    return {
+      label: prefix + suffix,
+      value: prefix + suffix,
+    }
+  })
 })
 </script>
 
@@ -104,6 +98,10 @@ export default defineComponent({
           :field-props="{
             options: autoCompleteOptions,
           }"
+        />
+        <pro-input-otp
+          title="InputOtp"
+          path="input-otp"
         />
       </n-flex>
     </n-card>
@@ -216,6 +214,18 @@ export default defineComponent({
           title="RadioGroup"
           path="radio-group"
           :field-props="{
+            options: [
+              { label: 'item1', value: 0 },
+              { label: 'item2', value: 1 },
+              { label: 'item3', value: 2 },
+            ],
+          }"
+        />
+        <pro-radio-group
+          title="RadioGroupButton"
+          path="radio-group"
+          :field-props="{
+            type: 'button',
             options: [
               { label: 'item1', value: 0 },
               { label: 'item2', value: 1 },

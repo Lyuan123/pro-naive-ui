@@ -3,7 +3,7 @@ import type { ProEditDataTableBaseColumn } from '../types'
 import { isFunction } from 'lodash-es'
 import { provideFieldIndex } from 'pro-composables'
 import { computed, defineComponent, inject } from 'vue'
-import { resolveComponentByField } from '../../_utils/resolveComponentByField'
+import { resolveComponentByField } from '../../_utils/resolve-component-by-field'
 import { editDataTableInjectionKey, useInjectProEditDataTableInst } from '../context'
 
 export default defineComponent({
@@ -21,7 +21,7 @@ export default defineComponent({
       required: true,
     },
     rowKey: {
-      type: [String, Number],
+      type: [String, Number] as PropType<string | number>,
     },
     column: {
       type: Object as PropType<ProEditDataTableBaseColumn>,

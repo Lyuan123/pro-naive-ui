@@ -5,9 +5,9 @@ import { useClipboard } from '@vueuse/core'
 import { isString, toString } from 'lodash-es'
 import { NButton, NIcon, NTooltip } from 'naive-ui'
 import { computed, defineComponent, toValue } from 'vue'
-import { useNaiveClsPrefix } from '../../_internal/useClsPrefix'
-import { useMountStyle } from '../../_internal/useMountStyle'
-import { isEmptyValue } from '../../_utils/isEmptyValue'
+import { useNaiveClsPrefix } from '../../_internal/use-cls-prefix'
+import { useMountStyle } from '../../_internal/use-mount-style'
+import { isEmptyValue } from '../../_utils/is-empty-value'
 import { useOverrideProps } from '../../composables'
 import { useInjectGlobalConfig } from '../../config-provider'
 import { useLocale } from '../../locales'
@@ -35,7 +35,7 @@ const ProCopyableText = defineComponent({
     )
 
     const {
-      getMessage,
+      t,
     } = useLocale(name)
 
     const {
@@ -59,9 +59,9 @@ const ProCopyableText = defineComponent({
     }
 
     return {
+      t,
       copied,
       copyText,
-      getMessage,
       mergedEmpty,
       overridedProps,
       mergedClsPrefix,
@@ -91,7 +91,7 @@ const ProCopyableText = defineComponent({
             ),
             default: () => {
               const text = this.copied ? 'copied' : 'copy'
-              return this.getMessage(text)
+              return this.t(text)
             },
           }}
         </NTooltip>

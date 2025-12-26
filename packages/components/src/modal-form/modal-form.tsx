@@ -5,18 +5,18 @@ import type { ProModalFormProps } from './props'
 import type { ProModalFormSlots } from './slots'
 import { NFlex } from 'naive-ui'
 import { computed, defineComponent } from 'vue'
-import { useNaiveClsPrefix } from '../_internal/useClsPrefix'
-import { useMountStyle } from '../_internal/useMountStyle'
+import { useNaiveClsPrefix } from '../_internal/use-cls-prefix'
+import { useMountStyle } from '../_internal/use-mount-style'
 import { keep } from '../_utils/keep'
-import { keysOf } from '../_utils/keysOf'
-import { resolveSlotWithProps, resolveWrappedSlotWithProps } from '../_utils/resolveSlot'
+import { keysOf } from '../_utils/keys-of'
+import { resolveSlotWithProps, resolveWrappedSlotWithProps } from '../_utils/resolve-slot'
 import { useOverrideProps } from '../composables'
 import { ProForm } from '../form'
 import { proFormPropKeys } from '../form/props'
 import { ProModal } from '../modal'
 import { proModalProps as _proModalProps } from '../modal/props'
 import Footer from './components/footer'
-import { createProModalForm } from './composables/createProModalForm'
+import { createProModalForm } from './composables/create-pro-modal-form'
 import { proModalFormProps } from './props'
 import style from './styles/index.cssr'
 
@@ -57,8 +57,8 @@ export default defineComponent({
       } = overridedProps.value
 
       return {
-        ...(proModalProps ?? {}),
         ...keep(restProps, keysOf(_proModalProps)),
+        ...(proModalProps ?? {}),
         'footer': undefined,
         'show': form.show.value,
         'onUpdateShow': undefined,
@@ -106,6 +106,7 @@ export default defineComponent({
       form,
       proFormProps,
       proModalProps,
+      overridedProps,
       mergedClsPrefix,
       footer: computed(() => overridedProps.value.footer),
       loading: computed(() => overridedProps.value.loading),
@@ -120,8 +121,8 @@ export default defineComponent({
           `${this.mergedClsPrefix}-pro-modal-form`,
         ]}
         style={{
-          width: this.width ?? '520px',
-          maxHeight: this.maxHeight ?? '80%',
+          width: this.overridedProps.width ?? '520px',
+          maxHeight: this.overridedProps.maxHeight ?? '80%',
         }}
         {...this.proModalProps}
       >

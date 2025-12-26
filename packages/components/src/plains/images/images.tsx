@@ -3,8 +3,8 @@ import type { ProImagesConfig } from './types'
 import { isArray, isString } from 'lodash-es'
 import { NFlex, NImage, NImageGroup } from 'naive-ui'
 import { defineComponent, toValue } from 'vue'
-import { useNaiveClsPrefix } from '../../_internal/useClsPrefix'
-import { isEmptyValue } from '../../_utils/isEmptyValue'
+import { useNaiveClsPrefix } from '../../_internal/use-cls-prefix'
+import { isEmptyValue } from '../../_utils/is-empty-value'
 
 import { useOverrideProps } from '../../composables'
 import { useInjectGlobalConfig } from '../../config-provider'
@@ -67,7 +67,11 @@ const ProImages = defineComponent({
     else {
       return (
         <NImageGroup {...imageGroupProps}>
-          <NFlex size="small">
+          <NFlex
+            size="small"
+            inline={true}
+            class={[`${this.mergedClsPrefix}-pro-images`]}
+          >
             {srcs.map(renderSingleImage)}
           </NFlex>
         </NImageGroup>

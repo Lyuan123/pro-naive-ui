@@ -2,8 +2,11 @@ export * from './components'
 
 export {
   createProForm,
+  type CreateProFormOptions,
+  extendProForm,
+  type ExtendProForm,
   useInjectProForm,
-} from './composables/createProForm'
+} from './composables/create-pro-form'
 
 export {
   default as ProForm,

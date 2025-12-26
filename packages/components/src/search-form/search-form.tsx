@@ -5,18 +5,18 @@ import type { ProSearchFormProps } from './props'
 import type { ProSearchFormSlots } from './slots'
 import { gridProps as _nGridProps, NFormItem, NGi, NGrid } from 'naive-ui'
 import { computed, defineComponent } from 'vue'
-import { useNaiveClsPrefix } from '../_internal/useClsPrefix'
-import { useMountStyle } from '../_internal/useMountStyle'
+import { useNaiveClsPrefix } from '../_internal/use-cls-prefix'
+import { useMountStyle } from '../_internal/use-mount-style'
 import { keep } from '../_utils/keep'
-import { keysOf } from '../_utils/keysOf'
-import { resolveSlotWithProps } from '../_utils/resolveSlot'
+import { keysOf } from '../_utils/keys-of'
+import { resolveSlotWithProps } from '../_utils/resolve-slot'
 import { useOverrideProps } from '../composables'
 import { ProFormClearableProvider } from '../config-provider'
 import { ProForm } from '../form'
 import { proFormPropKeys } from '../form/props'
 import GridFieldItem from './components/grid-field-item'
 import Suffix from './components/suffix'
-import { createProSearchForm } from './composables/createProSearchForm'
+import { createProSearchForm } from './composables/create-pro-search-form'
 import { proSearchFormProps } from './props'
 import style from './styles/index.cssr'
 
@@ -52,8 +52,8 @@ export default defineComponent({
         ...restProps
       } = overridedProps.value
       return {
-        ...(gridProps ?? {}),
         ...keep(restProps, keysOf(_nGridProps)),
+        ...(gridProps ?? {}),
         collapsed: form.collapsed.value,
       }
     })
@@ -75,6 +75,8 @@ export default defineComponent({
       searchButtonProps: computed(() => overridedProps.value.searchButtonProps),
       showSuffixGridItem: computed(() => overridedProps.value.showSuffixGridItem),
       collapseButtonProps: computed(() => overridedProps.value.collapseButtonProps),
+      suffixGridItemProps: computed(() => overridedProps.value.suffixGridItemProps),
+      suffixFormItemProps: computed(() => overridedProps.value.suffixFormItemProps),
     }
   },
 
@@ -95,11 +97,23 @@ export default defineComponent({
           class={[`${mergedClsPrefix}-pro-search-form`]}
         >
           <NGrid {...nGridProps}>
-            {(columns ?? []).map(column => <GridFieldItem column={column} />)}
+            {(columns ?? []).map((column) => {
+              return (
+                <GridFieldItem
+                  column={column}
+                  span={column.span}
+                  offset={column.offset}
+                />
+              )
+            })}
             {showSuffixGridItem && (
-              <NGi suffix={true}>
+              <NGi
+                {...this.suffixGridItemProps}
+                suffix={true}
+              >
                 {{
                   default: ({ overflow }: any) => {
+                    console.log(overflow)
                     const suffixDom = (
                       <Suffix
                         form={this.form}
@@ -110,7 +124,10 @@ export default defineComponent({
                       />
                     )
                     return (
-                      <NFormItem class={[`${mergedClsPrefix}-pro-search-form__suffix`]}>
+                      <NFormItem
+                        {...this.suffixFormItemProps}
+                        class={[`${mergedClsPrefix}-pro-search-form__suffix`]}
+                      >
                         {resolveSlotWithProps(this.$slots.suffix, {
                           overflow,
                           suffixDom,

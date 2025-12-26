@@ -1,6 +1,7 @@
+import type { ArrayField, BaseField } from 'pro-composables'
 import type { TupleToUnion } from 'type-fest'
 import type { ExtractPublicPropTypes, PropType } from 'vue'
-import { simplyOmit } from '../../../_utils/simplyOmit'
+import { simplyOmit } from '../../../_utils/simply-omit'
 import { proFormItemProps } from '../form-item'
 
 export const proFieldProps = {
@@ -9,6 +10,10 @@ export const proFieldProps = {
    * 透传给表单控件的 placeholder
    */
   placeholder: [String, Array] as PropType<string | [string, string]>,
+  /**
+   * 字段实例，默认内部自动创建，如果需要手动控制字段，可以传入
+   */
+  fieldInstance: Object as PropType<BaseField | ArrayField>,
   /**
    * 传递给表单控件的 props
    */
@@ -70,7 +75,6 @@ export const proFieldProps = {
 const proFieldIgnoreKeys = [
   'isList',
   'fieldProps',
-  'valueModelName',
 ] as const
 
 /**
@@ -91,7 +95,7 @@ const proListFieldIgnoreKeys = [
   'onChange',
   'fieldProps',
   'placeholder',
-  'onInputValue',
+  'onUpdateValue',
   'valueModelName',
 ] as const
 

@@ -5,27 +5,22 @@ import type { ProEditDataTableSlots } from '../slots'
 import { useInjectField } from 'pro-composables'
 import { computed, defineComponent, provide } from 'vue'
 import { keep } from '../../_utils/keep'
-import { resolveSlotWithProps } from '../../_utils/resolveSlot'
+import { resolveSlotWithProps } from '../../_utils/resolve-slot'
 import { ProDataTable } from '../../data-table'
 import { proDataTablePropKeys } from '../../data-table/props'
 import { useFieldUtils } from '../../form'
 import { editDataTableInjectionKey, provideProEditDataTableInst } from '../context'
-import { useInjectEditDataTableInstStore } from '../inst'
 import { internalEditDataTableProps } from '../props'
-import { useColumns } from './composables/useColumns'
-import { useEditable } from './composables/useEditable'
-import { useProDataTableInst } from './composables/useProDataTableInst'
+import { useColumns } from './composables/use-columns'
+import { useEditable } from './composables/use-editable'
+import { useProDataTableInst } from './composables/use-pro-data-table-inst'
 import CreatorButton from './creator-button'
 
 export default defineComponent({
   name: 'EditDataTable',
   props: internalEditDataTableProps,
   slots: Object as SlotsType<ProEditDataTableSlots>,
-  setup(props) {
-    const {
-      registerInst,
-    } = useInjectEditDataTableInstStore()!
-
+  setup(props, { expose }) {
     const {
       sort,
       page,
@@ -108,7 +103,7 @@ export default defineComponent({
       moveDown,
     }
 
-    registerInst(exposed)
+    expose(exposed)
     provideProEditDataTableInst(exposed)
     provide(editDataTableInjectionKey, {
       editableKeys,

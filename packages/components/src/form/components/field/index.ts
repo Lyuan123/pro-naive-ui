@@ -1,6 +1,15 @@
 export {
   useFieldUtils,
-} from './composables/useFieldUtils'
+} from './composables/use-field-utils'
+
+export {
+  useMergePlaceholder,
+} from './composables/use-merge-placeholder'
+
+export {
+  useProField,
+  useProListField,
+} from './composables/use-pro-field'
 
 export {
   default as ProField,
@@ -19,11 +28,11 @@ export * from './slots'
 
 export {
   pickProFieldSharedProps,
-} from './utils/pickProFieldSharedProps'
+} from './utils/pick-pro-field-shared-props'
 
 export {
   pickProListFieldSharedProps,
-} from './utils/pickProListFieldSharedProps'
+} from './utils/pick-pro-list-field-shared-props'
 
 export type {
   InternalPath,

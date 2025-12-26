@@ -1,4 +1,3 @@
-export * from './useComponentInst'
-export * from './useNDataTable'
-export * from './useOmitProps'
-export * from './useOverrideProps'
+export * from './use-n-data-table'
+export * from './use-omit-props'
+export * from './use-override-props'

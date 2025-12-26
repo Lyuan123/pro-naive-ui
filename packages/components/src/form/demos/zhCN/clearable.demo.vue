@@ -4,34 +4,28 @@
 我们开发了一个组件 `pro-form-clearable-provider` 来完成这个功能，请包裹在需要被清空的表单项组件上即可，它是通过 `pro-config-provider` 组件的 [prop-overrides](config-provider#prop-overrides.vue) 实现
 </markdown>
 
-<script lang="ts">
+<script setup lang="ts">
 import { createProForm } from 'pro-naive-ui'
-import { computed, defineComponent } from 'vue'
+import { computed, ref } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const form = createProForm()
+const form = createProForm()
+const readonly = ref(false)
 
+const autoCompleteOptions = computed(() => {
+  const value = form.values.value['auto-complete']
+  return ['@gmail.com', '@163.com', '@qq.com'].map((suffix) => {
+    const prefix = (value ?? '').split('@')[0]
     return {
-      form,
-      autoCompleteOptions: computed(() => {
-        const value = form.values.value['auto-complete']
-        return ['@gmail.com', '@163.com', '@qq.com'].map((suffix) => {
-          const prefix = (value ?? '').split('@')[0]
-          return {
-            label: prefix + suffix,
-            value: prefix + suffix,
-          }
-        })
-      }),
+      label: prefix + suffix,
+      value: prefix + suffix,
     }
-  },
+  })
 })
 </script>
 
 <template>
   <pro-form-clearable-provider>
-    <pro-form :form="form" label-width="auto">
+    <pro-form :form="form" label-width="auto" :readonly>
       <n-grid :cols="2" x-gap="16">
         <n-gi>
           <pro-date title="date" path="date" />
@@ -137,12 +131,40 @@ export default defineComponent({
         </n-gi>
         <n-gi>
           <pro-tree-select
-            title="select"
-            path="select"
+            title="tree-select"
+            path="tree-select"
             :field-props="{
+              showPath: true,
               options: [
-                { label: '北京', value: 0 },
-                { label: '上海', value: 1 },
+                {
+                  label: 'Rubber Soul',
+                  key: 0,
+                  children: [
+                    {
+                      label: 'Drive My Car',
+                      key: 1,
+
+                    },
+                    {
+                      label: 'Wait',
+                      key: 2,
+                    },
+                  ],
+                },
+                {
+                  label: 'Let It Be',
+                  key: 3,
+                  children: [
+                    {
+                      label: 'For You Blue',
+                      key: 4,
+                    },
+                    {
+                      label: 'Get Back',
+                      key: 5,
+                    },
+                  ],
+                },
               ],
             }"
           />
@@ -158,6 +180,14 @@ export default defineComponent({
         </n-gi>
       </n-grid>
       <n-flex>
+        <n-switch v-model:value="readonly" class="mb-8px">
+          <template #checked>
+            编辑
+          </template>
+          <template #unchecked>
+            只读
+          </template>
+        </n-switch>
         <n-button attr-type="reset">
           重置
         </n-button>

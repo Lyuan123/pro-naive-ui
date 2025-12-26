@@ -7,13 +7,13 @@ import { collapseTransitionProps, NCard, NFlex, NIcon } from 'naive-ui'
 import { computed, defineComponent } from 'vue'
 import ProCollapseTransition from '../_internal/components/collapse-transition'
 import ProTooltip from '../_internal/components/pro-tooltip'
-import { useNaiveClsPrefix } from '../_internal/useClsPrefix'
-import { useMountStyle } from '../_internal/useMountStyle'
-import { mergeClass } from '../_utils/mergeClass'
-import { resolveSlot, resolveWrappedSlotWithProps } from '../_utils/resolveSlot'
+import { useNaiveClsPrefix } from '../_internal/use-cls-prefix'
+import { useMountStyle } from '../_internal/use-mount-style'
+import { mergeClass } from '../_utils/merge-class'
+import { resolveSlot, resolveWrappedSlotWithProps } from '../_utils/resolve-slot'
 import { useOmitProps, useOverrideProps } from '../composables'
 import { useLocale } from '../locales'
-import { useCollapseTransition } from './composables/useCollapseTransition'
+import { useCollapseTransition } from './composables/use-collapse-transition'
 import { proCardExtendProps, proCardProps } from './props'
 import style from './styles/index.cssr'
 
@@ -24,7 +24,7 @@ export default defineComponent({
   slots: Object as SlotsType<ProCardSlots>,
   setup(props, { slots }) {
     const {
-      getMessage,
+      t,
     } = useLocale('ProCard')
 
     const overridedProps = useOverrideProps<ProCardProps>(
@@ -50,8 +50,13 @@ export default defineComponent({
       return !!title || !!slots.header || !!tooltip
     })
 
+    const showTooltip = computed(() => {
+      const { tooltip } = overridedProps.value
+      return !!tooltip && tooltip.length > 0
+    })
+
     const collapseText = computed(() => {
-      return getMessage('collapse')(!show.value)
+      return t('collapse')(!show.value)
     })
 
     const resolvedTitle = computed(() => {
@@ -83,6 +88,7 @@ export default defineComponent({
       show,
       nCardProps,
       showHeader,
+      showTooltip,
       collapseText,
       resolvedTitle,
       triggerExpand,
@@ -125,24 +131,24 @@ export default defineComponent({
                 }]}
                 onClick={() => this.triggerExpand('main')}
               >
-                {
-                  resolveSlot(this.$slots.header, () => [this.resolvedTitle])
-                }
-                <ProTooltip
-                  trigger="hover"
-                  tooltip={this.tooltip}
-                >
-                  {{
-                    trigger: () => [
-                      <NIcon
-                        size={18}
-                        class={`${mergedClsPrefix}-icon--tooltip`}
-                      >
-                        <InfoCircleOutlined />
-                      </NIcon>,
-                    ],
-                  }}
-                </ProTooltip>
+                {resolveSlot(this.$slots.header, () => [this.resolvedTitle])}
+                {this.showTooltip && (
+                  <ProTooltip
+                    trigger="hover"
+                    tooltip={this.tooltip}
+                  >
+                    {{
+                      trigger: () => [
+                        <NIcon
+                          size={18}
+                          class={`${mergedClsPrefix}-icon--tooltip`}
+                        >
+                          <InfoCircleOutlined />
+                        </NIcon>,
+                      ],
+                    }}
+                  </ProTooltip>
+                )}
               </div>
             )
           },

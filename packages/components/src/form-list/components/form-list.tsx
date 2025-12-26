@@ -6,14 +6,13 @@ import { PlusOutlined } from '@vicons/antd'
 import { NIcon } from 'naive-ui'
 import { ROW_UUID_KEY, useInjectField } from 'pro-composables'
 import { computed, defineComponent, ref } from 'vue'
-import { useNaiveClsPrefix } from '../../_internal/useClsPrefix'
-import { resolveSlotWithProps } from '../../_utils/resolveSlot'
+import { useNaiveClsPrefix } from '../../_internal/use-cls-prefix'
+import { resolveSlotWithProps } from '../../_utils/resolve-slot'
 import { ProButton } from '../../button'
 import { useInjectProForm } from '../../form'
 import { useFieldUtils } from '../../form/components'
 import { useLocale } from '../../locales'
 import { provideProFormListInst } from '../context'
-import { useInjectFormListInstStore } from '../inst'
 import { internalFormListProps } from '../props'
 import FormListItem from './form-list-item'
 
@@ -27,13 +26,13 @@ const CreatorButton = defineComponent({
   },
   setup(props) {
     const {
-      getMessage,
+      t,
     } = useLocale('ProFormList')
 
     const {
       insert,
       stringPath,
-      value: list,
+      valueWithUid: list,
     } = useInjectField(true)!
 
     const form = useInjectProForm()
@@ -45,7 +44,7 @@ const CreatorButton = defineComponent({
       return {
         block: true,
         dashed: true,
-        content: getMessage('add'),
+        content: t('add'),
         loading: addRowLoading.value,
         renderIcon: () => {
           return (
@@ -110,11 +109,7 @@ export default defineComponent({
   name: 'FormList',
   props: internalFormListProps,
   slots: Object as SlotsType<ProFormListSlots>,
-  setup(props) {
-    const {
-      registerInst,
-    } = useInjectFormListInstStore()!
-
+  setup(props, { expose }) {
     const {
       readonly,
     } = useFieldUtils()
@@ -129,14 +124,14 @@ export default defineComponent({
       remove,
       unshift,
       moveDown,
-      uidValue: uidList,
+      valueWithUid: list,
     } = useInjectField(true)!
 
     const showCreatorButton = computed(() => {
       const { max, creatorButtonProps } = props
       return !readonly.value
         && creatorButtonProps !== false
-        && uidList.value.length < (max ?? Number.POSITIVE_INFINITY)
+        && list.value.length < (max ?? Number.POSITIVE_INFINITY)
     })
 
     const exposed: ProFormListInst = {
@@ -151,16 +146,16 @@ export default defineComponent({
       moveDown,
     }
 
-    registerInst(exposed)
+    expose(exposed)
     provideProFormListInst(exposed)
     return {
-      uidList,
+      list,
       showCreatorButton,
     }
   },
   render() {
     const {
-      uidList,
+      list,
       $props,
       $slots,
     } = this
@@ -177,7 +172,7 @@ export default defineComponent({
       onlyShowFirstItemLabel,
     } = $props
 
-    const listDom = uidList.map((item, index) => {
+    const listDom = list.map((item, index) => {
       return (
         <FormListItem
           key={item[ROW_UUID_KEY]}

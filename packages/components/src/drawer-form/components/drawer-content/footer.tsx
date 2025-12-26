@@ -4,7 +4,7 @@ import { computed, defineComponent, inject } from 'vue'
 import { warnOnce } from '../../../_utils/warn'
 import { ProButton } from '../../../button'
 import { useLocale } from '../../../locales'
-import { useInjectProDrawerForm } from '../../composables/createProDrawerForm'
+import { useInjectProDrawerForm } from '../../composables/create-pro-drawer-form'
 import { proDrawerFormInjectionKey } from '../../context'
 
 export default defineComponent({
@@ -21,7 +21,7 @@ export default defineComponent({
   },
   setup(props) {
     const {
-      getMessage,
+      t,
     } = useLocale('ProDrawerContent')
 
     const {
@@ -50,8 +50,8 @@ export default defineComponent({
             onClick: () => {
               form?.close()
             },
+            content: t('reset'),
             disabled: loading?.value,
-            content: getMessage('reset'),
             ...(props.resetButtonProps ?? {}),
           }
         : {}
@@ -64,8 +64,8 @@ export default defineComponent({
             onClick: () => {
               form?.submit()
             },
+            content: t('submit'),
             loading: loading?.value,
-            content: getMessage('submit'),
             ...(props.submitButtonProps ?? {}),
           }
         : {}

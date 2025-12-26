@@ -2,47 +2,40 @@
 # 基本用法
 </markdown>
 
-<script lang="tsx">
-import { random } from 'lodash-es'
+<script setup lang="tsx">
 import { useMessage } from 'naive-ui'
 import { createProModalForm } from 'pro-naive-ui'
-import { defineComponent, ref } from 'vue'
+import { ref } from 'vue'
+
+const loading = ref(false)
+const message = useMessage()
+
+const modalForm = createProModalForm({
+  onSubmit: async (values) => {
+    loading.value = true
+    await delay(1500)
+    message.success('更新成功')
+    console.log(values)
+    modalForm.close()
+    loading.value = false
+  },
+})
+
+const { open } = modalForm
+
+const len = ref(2)
+
+function random(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+function updateList() {
+  len.value = random(2, 20)
+}
 
 function delay(time: number) {
   return new Promise(resolve => setTimeout(resolve, time))
 }
-
-export default defineComponent({
-  setup() {
-    const loading = ref(false)
-    const message = useMessage()
-
-    const modalForm = createProModalForm({
-      onSubmit: async (values) => {
-        loading.value = true
-        await delay(1500)
-        message.success('更新成功')
-        console.log(values)
-        modalForm.close()
-        loading.value = false
-      },
-    })
-
-    const len = ref(2)
-
-    function updateList() {
-      len.value = random(2, 20)
-    }
-
-    return {
-      len,
-      loading,
-      updateList,
-      form: modalForm,
-      open: modalForm.open,
-    }
-  },
-})
 </script>
 
 <template>
@@ -52,7 +45,7 @@ export default defineComponent({
     </n-button>
   </n-flex>
   <pro-modal-form
-    :form="form"
+    :form="modalForm"
     :loading="loading"
     title="新建表单"
     preset="card"

@@ -6,8 +6,8 @@ import { cloneDeep, get } from 'lodash-es'
 import { NFormItem, NIcon } from 'naive-ui'
 import { useInjectField } from 'pro-composables'
 import { computed, defineComponent, Fragment, provide, ref, toRef } from 'vue'
-import { useNaiveClsPrefix } from '../../_internal/useClsPrefix'
-import { resolveSlotWithProps } from '../../_utils/resolveSlot'
+import { useNaiveClsPrefix } from '../../_internal/use-cls-prefix'
+import { resolveSlotWithProps } from '../../_utils/resolve-slot'
 import { ProButton } from '../../button'
 import { useInjectProForm } from '../../form'
 import { useFieldUtils } from '../../form/components'
@@ -15,7 +15,7 @@ import { proFieldConfigInjectionKey } from '../../form/components/field/context'
 import { useLocale } from '../../locales'
 import { useInjectProFormListInst } from '../context'
 import { internalFormListProps } from '../props'
-import { useResolvePath } from './composables/useResolvePath'
+import { useResolvePath } from './composables/use-resolve-path'
 
 const Action = defineComponent({
   name: 'Action',
@@ -33,7 +33,7 @@ const Action = defineComponent({
   },
   setup(props) {
     const {
-      getMessage,
+      t,
     } = useLocale('ProFormList')
 
     const {
@@ -48,7 +48,7 @@ const Action = defineComponent({
       insert,
       remove: _remove,
       stringPath,
-      value: list,
+      valueWithUid: list,
     } = useInjectField(true)!
 
     const showCopyButton = computed(() => {
@@ -69,7 +69,7 @@ const Action = defineComponent({
       return {
         text: true,
         loading: copyLoading.value,
-        tooltip: getMessage('copyThisLine'),
+        tooltip: t('copyThisLine'),
         renderIcon: () => {
           return (
             <NIcon>
@@ -86,7 +86,7 @@ const Action = defineComponent({
       return {
         text: true,
         loading: removeLoading.value,
-        tooltip: getMessage('removeThisLine'),
+        tooltip: t('removeThisLine'),
         renderIcon: () => {
           return (
             <NIcon>
@@ -204,7 +204,7 @@ export default defineComponent({
     } = useResolvePath(toRef(props, 'index'))
 
     const {
-      value: list,
+      valueWithUid: list,
     } = useInjectField(true)!
 
     const total = computed(() => {

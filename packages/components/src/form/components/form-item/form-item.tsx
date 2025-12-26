@@ -7,13 +7,13 @@ import { NFormItem, NIcon } from 'naive-ui'
 import { useInjectField } from 'pro-composables'
 import { computed, defineComponent, Fragment, ref, useAttrs } from 'vue'
 import ProTooltip from '../../../_internal/components/pro-tooltip'
-import { useNaiveClsPrefix } from '../../../_internal/useClsPrefix'
-import { useMountStyle } from '../../../_internal/useMountStyle'
+import { useNaiveClsPrefix } from '../../../_internal/use-cls-prefix'
+import { useMountStyle } from '../../../_internal/use-mount-style'
 import { useOverrideProps } from '../../../composables'
-import { useFieldUtils } from '../field/composables/useFieldUtils'
+import { useFieldUtils } from '../field/composables/use-field-utils'
 import { fieldExtraKey } from '../field/field-extra-info'
 import TrackValidationResult from './components/track-validation-result'
-import { useRules } from './composables/useRules'
+import { useRules } from './composables/use-rules'
 import { proFormItemProps } from './props'
 import style from './styles/index.cssr'
 
@@ -128,27 +128,30 @@ export default defineComponent({
             : undefined,
           label: labelDom
             ? () => {
+                const showTooltip = !!this.tooltip && this.tooltip.length > 0
                 return (
                   <div class={[`${this.mergedClsPrefix}-pro-form-item__label`]}>
                     {labelDom}
-                    <ProTooltip
-                      trigger="hover"
-                      tooltip={this.tooltip}
-                    >
-                      {{
-                        trigger: () => {
-                          return (
-                            <NIcon
-                              depth={3}
-                              size={16}
-                              class={[`${this.mergedClsPrefix}-pro-form-item__icon`]}
-                            >
-                              <QuestionCircleOutlined />
-                            </NIcon>
-                          )
-                        },
-                      }}
-                    </ProTooltip>
+                    {showTooltip && (
+                      <ProTooltip
+                        trigger="hover"
+                        tooltip={this.tooltip}
+                      >
+                        {{
+                          trigger: () => {
+                            return (
+                              <NIcon
+                                depth={3}
+                                size={16}
+                                class={[`${this.mergedClsPrefix}-pro-form-item__icon`]}
+                              >
+                                <QuestionCircleOutlined />
+                              </NIcon>
+                            )
+                          },
+                        }}
+                      </ProTooltip>
+                    )}
                   </div>
                 )
               }
